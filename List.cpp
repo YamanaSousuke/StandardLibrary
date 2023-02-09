@@ -6,6 +6,7 @@ void Search(Node* node, int element);
 void InsertAfterTheElement(Node* node, int search, int element);
 void InsertBeforeTheElement(Node* node, int search, int element);
 Node* InsertAtBeging(Node* node, int element);
+Node* DeleteNode(Node* node, int element);
 
 int main()
 {
@@ -42,13 +43,14 @@ int main()
 
 	int searchElement = 0;
 	int insertElement = 0;
-	// std::cout << "search element" << std::endl;
-	// std::cin >> searchElement;
-	std::cout << "insert element" << std::endl;
-	std::cin >> insertElement;
+	std::cout << "search element" << std::endl;
+	std::cin >> searchElement;
+	// std::cout << "insert element" << std::endl;
+	// std::cin >> insertElement;
 	
 	// InsertBeforeTheElement(head, searchElement, insertElement);
-	head = InsertAtBeging(head, insertElement);
+	// head = InsertAtBeging(head, insertElement);
+	head = DeleteNode(head, searchElement);
 
 	// •\Ž¦
 	ToString(head);
@@ -172,4 +174,42 @@ Node* InsertAtBeging(Node* node, int element)
 	newNode->value = element;
 	newNode->next = node;
 	return node = newNode;
+}
+
+// ƒm[ƒh‚Ìíœ
+Node* DeleteNode(Node* node, int element)
+{
+	Node* current = node;
+	Node* prev = current;
+
+	while (1) {
+		if (current->value == element || current->next == NULL) {
+			break;
+		}
+
+		prev = current;
+		current = current->next;
+	}
+
+	// ’Tõ‚µ‚½—v‘f‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡
+	if (current->value != element && current->next == NULL) {
+		std::cout << "not found" << std::endl;
+	}
+	// ––”öƒm[ƒh‚Ìíœ
+	else if (current->value == element && current->next == NULL) {
+		prev->next = NULL;
+		delete current;
+	}
+	// æ“ªƒm[ƒh‚Ìíœ
+	else if (current == node) {
+		node = current->next;
+		delete current;
+	}
+	// 
+	else {
+		prev->next = current->next;
+		delete current;
+	}
+
+	return node;
 }
