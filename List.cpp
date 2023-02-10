@@ -1,215 +1,82 @@
 #include <iostream>
 #include "List.h"
 
-void ToString(Node* node);
-void Search(Node* node, int element);
-void InsertAfterTheElement(Node* node, int search, int element);
-void InsertBeforeTheElement(Node* node, int search, int element);
-Node* InsertAtBeging(Node* node, int element);
-Node* DeleteNode(Node* node, int element);
-
 int main()
 {
-	Node* head = nullptr;
-	Node* old = nullptr;
+	List list = {};
+	list.Initialize();
 
-	// 動的に要素数の取得
-	int numElements = 0;
-	// 挿入する要素
-	int element = 0;
-	
-	std::cout << "num element" << std::endl;
-	std::cin >> numElements;
-
-	for (int i = 0; i < numElements; i++) {
-		std::cout << "add element" << std::endl;
-		std::cin >> element;
-
-		Node* newNode = new Node;
-		newNode->value = element;
-		newNode->next = NULL;
-
-		if (i == 0) {
-			head = newNode;
-		}
-		else {
-			old->next = newNode;
-		}
-		old = newNode;
-	}
-
-	// 表示
-	// ToString(head);
-
-	int searchElement = 0;
-	int insertElement = 0;
-	std::cout << "search element" << std::endl;
-	std::cin >> searchElement;
-	// std::cout << "insert element" << std::endl;
-	// std::cin >> insertElement;
-	
-	// InsertBeforeTheElement(head, searchElement, insertElement);
-	// head = InsertAtBeging(head, insertElement);
-	head = DeleteNode(head, searchElement);
-
-	// 表示
-	ToString(head);
-
+	list.Clear();
 	return 0;
 }
 
-// 表示
-void ToString(Node* node)
+// 初期化
+void List::Initialize()
 {
-	Node* current = node;
-	int count = 0;
-
-	while (1) {
-		std::cout << count << ":" << current->value << std::endl;
-		count++;
-		if (current->next == NULL) {
-			break;
-		}
-		current = current->next;
-	}
+	// ダミーのノードの作成
+	Node* dummyNode = new Node;
+	head = current = dummyNode;
+	dummyNode->next = dummyNode->prev = dummyNode;
 }
 
-// 特定の要素の探索
-void Search(Node* node, int element)
-{
-	Node* current = node;
-
-	while (1) {
-		// 要素が見つかったか、次へのポインターが無ければ終了
-		if (current->value == element) {
-			break;
-		}
-
-		if (current->next == NULL) {
-			break;
-		}
-
-		current = current->next;
-	}
-
-	if (current->next == NULL) {
-		std::cout << "not found" << std::endl;
-	}
-	else {
-		std::cout << current->value << std::endl;
-	}
-	
-}
-
-// 特定の要素の後に指定した要素の挿入
-void InsertAfterTheElement(Node* node, int search, int element)
-{
-	Node* current = node;
-
-	while (1) {
-		if (current->value == search || current->next == NULL) {
-			break;
-		}
-		current = current->next;
-	}
-	
-	// 探索した要素が見つからなかった場合
-	if (current->value != search && current->next == NULL) {
-		std::cout << "not found" << std::endl;
-	}
-	// 探索した要素が一番最後に有った場合
-	else if (current->value == search && current->next == NULL) {
-		Node* newNode = new Node;
-		newNode->value = element;
-		newNode->next == NULL;
-	}
-	// 探索した要素が一番最後以外に有った場合
-	else {
-		Node* newNode = new Node;
-		newNode->value = element;
-		newNode->next = current->next;
-		current->next = newNode;
-	}
-}
-
-// 特定の要素の前に指定した要素の挿入
-void InsertBeforeTheElement(Node* node, int search, int element)
-{
-	Node* current = node;
-	Node* prev = nullptr;
-
-	while (1) {
-		if (current->value == search || current->next == NULL) {
-			break;
-		}
-
-		prev = current;
-		current = current->next;
-	}
-
-	// 探索した要素が見つからなかった場合
-	if (current->value != search && current->next == NULL) {
-		std::cout << "not found" << std::endl;
-	}
-	// 先頭にノードの追加
-	else if (current == node) {
-		Node* newNode = new Node;
-		newNode->value = element;
-		newNode->next = current->next;
-		node = newNode;
-	}
-	// 先頭以外にノードの追加
-	else {
-		Node* newNode = new Node;
-		newNode->value = element;
-		newNode->next = current;
-		prev->next = newNode;
-	}
-}
-
-// 要素をリストの先頭に挿入
-Node* InsertAtBeging(Node* node, int element)
+// 先頭にノードの挿入
+void List::InsertFront(int data)
 {
 	Node* newNode = new Node;
-	newNode->value = element;
-	newNode->next = node;
-	return node = newNode;
+	Node* dummy = head->next;
+
+	head->next = head->next->prev = newNode;
+	SetNode(newNode, data, head, dummy);
+	current = newNode;
 }
 
-// ノードの削除
-Node* DeleteNode(Node* node, int element)
+// ノードの各メンバに値を設定
+void List::SetNode(Node* node, int data, Node* next, Node* prev)
 {
-	Node* current = node;
-	Node* prev = current;
+	node->value = data;
+	node->next = next;
+	node->prev = prev;
+}
 
-	while (1) {
-		if (current->value == element || current->next == NULL) {
-			break;
-		}
+// 指定したノードの削除
+void List::Remove(Node* node)
+{
+	node->prev->next = node->next;
+	node->next->prev = node->prev;
+	current = node->prev;
+	delete node;
 
-		prev = current;
-		current = current->next;
+	// ダミーを指していたら一つ先を指し示す
+	if (current == head) {
+		current = head->next;
 	}
+}
 
-	// 探索した要素が見つからなかった場合
-	if (current->value != element && current->next == NULL) {
-		std::cout << "not found" << std::endl;
-	}
-	// 末尾ノードの削除
-	else if (current->value == element && current->next == NULL) {
-		prev->next = NULL;
-		delete current;
-	}
-	// 先頭ノードの削除
-	else if (current == node) {
-		node = current->next;
-		delete current;
-	}
-	// 
-	else {
-		prev->next = current->next;
-		delete current;
+// 先頭ノードの削除
+void List::RemoveFront()
+{
+	// TODO : リストが空であれば警告の表示
+	if (IsEmpty()) {
+		std::cout << "not exit node" << std::endl;
+		return;
 	}
 
-	return node;
+	Remove(head->next);
+}
+
+// リストが空かどうか
+bool List::IsEmpty()
+{
+	return head->next == head;
+}
+
+// 全てのノードの削除
+void List::Clear()
+{
+	while (!IsEmpty()) {
+		RemoveFront();
+	}
+
+	// ダミーノードの破棄
+	delete head;
 }
