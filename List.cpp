@@ -19,19 +19,31 @@ void List::Initialize()
 	dummyNode->next = dummyNode->prev = dummyNode;
 }
 
-// æ“ª‚Éƒm[ƒh‚Ì‘}“ü
-void List::InsertFront(int data)
+// Žw’è‚µ‚½ƒm[ƒh‚Ì’¼Œã‚É—v‘f‚Ì‘}“ü
+void List::InsertAfter(Node* node, int data)
 {
 	Node* newNode = new Node;
-	Node* dummy = head->next;
+	Node* next = node->next;
 
-	head->next = head->next->prev = newNode;
-	SetNode(newNode, data, head, dummy);
+	node->next = node->next->prev = newNode;
+	SetNode(newNode, data, node, next);
 	current = newNode;
 }
 
+// æ“ª‚Éƒm[ƒh‚Ì‘}“ü
+void List::InsertFront(int data)
+{
+	InsertAfter(head, data);
+}
+
+// ––”ö‚Éƒm[ƒh‚Ì‘}“ü
+void List::InsertRear(int data)
+{
+	InsertAfter(head->prev, data);
+}
+
 // ƒm[ƒh‚ÌŠeƒƒ“ƒo‚É’l‚ðÝ’è
-void List::SetNode(Node* node, int data, Node* next, Node* prev)
+void List::SetNode(Node* node, int data, Node* prev, Node* next)
 {
 	node->value = data;
 	node->next = next;
