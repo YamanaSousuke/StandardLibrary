@@ -27,6 +27,12 @@ public:
 		return ret;
 	}
 
+	void Construct(T& value)
+	{
+		new T(value);
+	}
+
+	// 領域の解放
 	void Dealloacte(T* p)
 	{
 		delete p;
@@ -52,13 +58,28 @@ public:
 			pop_back();
 		}
 
-		allocNode.Dealloacte(node);
+		allocNode.Dealloacte(dummyNode);
 	}
 
-	// 末尾にデータの追加
+	// 先頭に要素の追加
+	void push_front(const T& value)
+	{
+		Node* newNode = CreateNode(value);
+		newNode->prev = dummyNode;
+		newNode->next = dummyNode->next;
+		dummyNode->next->prev = newNode;
+		dummyNode->next = newNode;
+	}
+
+	// 末尾に要素の追加
 	void push_back(const T& value)
 	{
-
+		Node* newNode = CreateNode(value);
+		newNode->prev = dummyNode->prev;
+		newNode->next = dummyNode;
+		dummyNode->prev->next = newNode;
+		dummyNode->prev = newNode;
+		size++;
 	}
 
 	// 末尾ノードの削除
@@ -77,7 +98,7 @@ private:
 	};
 
 	// ノード
-	Node* node;
+	Node* dummyNode;
 	// サイズ
 	size_t size;
 	
@@ -90,14 +111,16 @@ private:
 	// 新しいノードの生成
 	void CreateNewNode()
 	{
-		node = allocNode.Alloacte(1);
-		node->next = node;
-		node->prev = node;
+		dummyNode = allocNode.Alloacte(1);
+		dummyNode->next = dummyNode;
+		dummyNode->prev = dummyNode;
 	}
 
 	// ノードの生成
-	void CreateNode(const T& value = T())
+	Node* CreateNode(const T& value = T())
 	{
 		Node* newNode = allocNode.Allocate(1);
+		allocT.Construct(value);
+		return newNode;
 	}
 };
