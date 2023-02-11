@@ -6,6 +6,12 @@ int main()
 	List list = {};
 	list.Initialize();
 
+	list.push_front(5);
+	list.push_front(3);
+	list.push_front(4);
+	list.ToString();
+
+
 	list.Clear();
 	return 0;
 }
@@ -31,15 +37,30 @@ void List::InsertAfter(Node* node, int data)
 }
 
 // 先頭にノードの挿入
-void List::InsertFront(int data)
+void List::push_front(int data)
 {
 	InsertAfter(head, data);
 }
 
 // 末尾にノードの挿入
-void List::InsertRear(int data)
+void List::push_back(int data)
 {
 	InsertAfter(head->prev, data);
+}
+
+// データの表示
+void List::ToString()
+{
+	if (IsEmpty()) {
+		std::cout << "not exit node" << std::endl;
+		return;
+	}
+
+	Node* node = head->next;
+	while (node != head) {
+		std::cout << node->value << std::endl;
+		node = node->next;
+	}
 }
 
 // ノードの各メンバに値を設定
@@ -74,6 +95,18 @@ void List::RemoveFront()
 	}
 
 	Remove(head->next);
+}
+
+// 末尾ノードの削除
+void List::RemoveRear()
+{
+	// TODO : リストが空であれば警告の表示
+	if (IsEmpty()) {
+		std::cout << "not exit node" << std::endl;
+		return;
+	}
+
+	Remove(head->prev);
 }
 
 // リストが空かどうか
