@@ -6,7 +6,7 @@ int main()
 {
 	// std::list<int> test = {};
 
-	MyList<int> myList;
-
+	MyList<int> myList(5, 5);
+	myList.ToString();
 	return 0;
 }

@@ -4,16 +4,13 @@
 #include <iostream>
 
 template<class T>
-class Allocator
+class MyAllocator
 {
 public:
-	Allocator() { std::cout << "Allocator Init" << std::endl; }
-	// Allocator(const Allocator&) { }
+	MyAllocator() { }
 
-	// valueのアドレスを返す
-	// T* Address(T& value) const { return &value; }
 	// ストレージの確保
-	T* Alloacte(size_t num)
+	T* allocate(size_t num)
 	{
 		T* ret = nullptr;
 		const size_t size = num * sizeof(T);
@@ -27,54 +24,74 @@ public:
 		return ret;
 	}
 
-	void Construct(T& value)
+	void construct(T* p, const T& value)
 	{
-		new T(value);
+		*p = value;
 	}
 
 	// 領域の解放
-	void Dealloacte(T* p)
+	void deallocate(T* p)
 	{
 		delete p;
 	}
-private:
+
+	// 割り当てられたストレージ内のオブジェクトの破棄
+	void destroy(T* p)
+	{
+		p->~T();
+	}
 };
 
 // リスト
-template<class T, class Alloc = Allocator<T>>
+template<class T, class Alloc = MyAllocator<T>>
 class MyList
 {
 public:
 	// コンストラクタ
-	explicit MyList(const Alloc& alloc = Alloc()) : size(0), allocT(alloc)
+	explicit MyList(const Alloc& alloc = Alloc())
 	{
-		CreateNewNode();
+		createDummyNode();
+	}
+
+	// サイズと要素を指定したコンストラクタ
+	explicit MyList(size_t num, const T& value = T(), const Alloc& alloc = Alloc())
+	{
+		createDummyNode();
+		while (size < num) {
+			push_back(value);
+		}
 	}
 
 	// デストラクタ
 	~MyList()
 	{
-		while (size > 0) {
-			pop_back();
-		}
-
-		allocNode.Dealloacte(dummyNode);
+		clear();
+		allocNode.deallocate(dummyNode);
 	}
 
 	// 先頭に要素の追加
 	void push_front(const T& value)
 	{
-		Node* newNode = CreateNode(value);
+		Node* newNode = createNode(value);
 		newNode->prev = dummyNode;
 		newNode->next = dummyNode->next;
 		dummyNode->next->prev = newNode;
 		dummyNode->next = newNode;
+		size++;
+	}
+
+	// 先頭要素の削除
+	void pop_front()
+	{
+		if (size > 0) {
+			deleteNode(dummyNode->next);
+		}
 	}
 
 	// 末尾に要素の追加
 	void push_back(const T& value)
 	{
-		Node* newNode = CreateNode(value);
+		Node* newNode = createNode(value);
 		newNode->prev = dummyNode->prev;
 		newNode->next = dummyNode;
 		dummyNode->prev->next = newNode;
@@ -82,11 +99,55 @@ public:
 		size++;
 	}
 
-	// 末尾ノードの削除
+	// 末尾の要素の削除
 	void pop_back()
 	{
-		if (size) {
-			std::cout << "delete last element" << std::endl;
+		if (size > 0) {
+			deleteNode(dummyNode->prev);
+		}
+	}
+
+	// リストに要素があるか
+	bool empty() const
+	{
+		return size == 0;
+	}
+
+	// サイズの取得
+	size_t getSize() const
+	{
+		return size;
+	}
+	
+	// 要素数に合わせてリサイズする
+	void resize(size_t num, const T& value = T())
+	{
+		// 要素数が足りないので、新しく追加する
+		while (num > size) {
+			push_back(value);
+		}
+
+		// 要素数が足りているので、削除する
+		while (num < size) {
+			pop_back();
+		}
+	}
+
+	// 全ての要素の削除
+	void clear()
+	{
+		while (size > 0) {
+			pop_back();
+		}
+	}
+
+	// 要素の表示
+	void ToString()
+	{
+		Node* next = dummyNode->next;
+		while (next != dummyNode) {
+			std::cout << next->data << std::endl;
+			next = next->next;
 		}
 	}
 private:
@@ -98,29 +159,40 @@ private:
 	};
 
 	// ノード
-	Node* dummyNode;
+	Node* dummyNode = nullptr;
 	// サイズ
-	size_t size;
+	size_t size = 0;
 	
-	Alloc allocT;
+	Alloc allocT = {};
 
 	// ノードの割り当て
-	Allocator<Node> allocNode;
+	MyAllocator<Node> allocNode = {};
 
 private:
-	// 新しいノードの生成
-	void CreateNewNode()
+	// ダミーのノードの生成
+	void createDummyNode()
 	{
-		dummyNode = allocNode.Alloacte(1);
+		dummyNode = allocNode.allocate(1);
 		dummyNode->next = dummyNode;
 		dummyNode->prev = dummyNode;
 	}
 
-	// ノードの生成
-	Node* CreateNode(const T& value = T())
+	// 新しいノードの生成
+	Node* createNode(const T& value = T())
 	{
-		Node* newNode = allocNode.Allocate(1);
-		allocT.Construct(value);
+		Node* newNode = allocNode.allocate(1);
+		allocT.construct(&newNode->data, value);
 		return newNode;
+	}
+
+	// 指定したノードの削除
+	void deleteNode(Node* toDelete)
+	{
+		toDelete->prev->next = toDelete->next;
+		toDelete->next->prev = toDelete->prev;
+
+		allocT.destroy(&toDelete->data);
+		allocNode.deallocate(toDelete);
+		size--;
 	}
 };
