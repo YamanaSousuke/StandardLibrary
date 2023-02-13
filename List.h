@@ -186,37 +186,69 @@ public:
 		return iterator(dummyNode);
 	}
 
-	// 要素の挿入
-	iterator insert(iterator position, const T& value)
+	// コンテナの再代入(個数と値の指定)
+	void assign(size_t num, const T& value)
 	{
-		Node* newNode = createNode(value);
-		newNode->prev = position.getNodePointer()->prev;
-		newNode->next = position.getNodePointer()->prev->next;
-		newNode->prev->next = newNode;
-		newNode->next->prev = newNode;
-		size++;
-		return iterator(--position);
-	}
-
-	// 範囲を指定して要素を削除する
-	iterator erase(iterator first, iterator last)
-	{
-		while (first != last) {
-			deleteNode((++first).getNodePointer()->prev);
+		size_t i = 0;
+		for (iterator it = begin(); i < num; ++it, ++i) {
+			// サイズが足りなければ、拡張する
+			if (i >= size) {
+				push_back(value);
+			}
+			// 既にあれば、解放してから値を割り当てる
+			else {
+				allocT.destroy(&(*it));
+				allocT.construct(&(*it), value);
+			}
 		}
-		return last;
+
+		// numの数を超えている分は削除する
+		while (size > i) {
+			pop_back();
+		}
 	}
 
-	// 1つの要素を削除する
-	iterator erase(iterator position)
+	// 指定した要素を全て破棄する
+	void remove(const T& value)
 	{
-		// TODO : 型??
-		// Node* node = position.getNodePointer()->next;
-		// iterator it = position.getNodePointer()->next;
-		return erase(position, position.getNodePointer()->next);
+		for (iterator it = end(); it.getNodePointer()->next != end().getNodePointer();) {
+			if (it.getNodePointer()->next->data == value) {
+				deleteNode(it.getNodePointer()->next);
+			}
+			else {
+				++it;
+			}
+		}
 	}
 
-	
+	// 条件を指定して要素を破棄する
+	template<class Predicate>
+	void remove_if(Predicate pred)
+	{
+		for (iterator it = end(); it.getNodePointer()->next != end().getNodePointer();) {
+			if (pred(it.getNodePointer()->next->data)) {
+				deleteNode(it.getNodePointer()->next);
+			}
+			else {
+				++it;
+			}
+		}
+	}
+
+	// 重複した要素の削除(コンテナがソート済であること)
+	void unique()
+	{
+		for (iterator it = end(); it.getNodePointer()->next != end().getNodePointer();) {
+			if (it != end() && *it == it.getNodePointer()->next->data) {
+				deleteNode(it.getNodePointer()->next);
+			}
+			else {
+				++it;
+			}
+		}
+	}
+
+
 
 private:
 	// ダミーのノードの生成

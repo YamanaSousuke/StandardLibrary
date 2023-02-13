@@ -27,6 +27,12 @@ public:
 		return node;
 	}
 
+	// 間接演算子のオーバーロード
+	T& operator*() const
+	{
+		return node->data;
+	}
+
 	// 前置演算子のオーバーロード
 	ListIterator& operator--()
 	{
