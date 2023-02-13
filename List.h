@@ -248,7 +248,51 @@ public:
 		}
 	}
 
+	// 1つの要素を移動させる
+	void splice(iterator position, MyList& list, iterator before)
+	{
+		// 要素を減らす
+		Node* temp = before.getNodePointer();
+		temp->next->prev = temp->prev;
+		temp->prev->next = temp->next;
 
+		// 新しい要素に付け加える
+		temp->prev = position.getNodePointer()->prev;
+		temp->next = position.getNodePointer();
+		position.getNodePointer()->prev->next = temp;
+		position.getNodePointer()->prev = temp;
+
+		--list.size;
+		++size;
+	}
+
+	void merge(MyList& x)
+	{
+		// 同じリストなら比較しない
+		if (&x == this) {
+			return;
+		}
+
+		iterator thisIt = end();
+
+		for (iterator xIt = x.end(); xIt.getNodePointer()->next != x.end().getNodePointer();) {
+			if (thisIt.getNodePointer()->next == end().getNodePointer() || xIt.getNodePointer()->next->data < thisIt.getNodePointer()->next->data) {
+				splice(thisIt.getNodePointer()->next, x, xIt.getNodePointer()->next);
+			}
+			else {
+				++thisIt;
+			}
+		}
+	}
+
+	// リストの入れ替え
+	void swap(MyList& other)
+	{
+		swap(size, other.size);
+		swap(dummyNode, other.dummyNode);
+		swap(allocT, other.allocT);
+		swap(allocNode, other.allocNode);
+	}
 
 private:
 	// ダミーのノードの生成
@@ -277,5 +321,14 @@ private:
 		allocT.destroy(&toDelete->data);
 		allocNode.deallocate(toDelete);
 		size--;
+	}
+
+	// 2つの変数の入れ替え
+	template<typename T>
+	void swap(T& a, T& b)
+	{
+		T temp = a;
+		a = b;
+		b = temp;
 	}
 };
