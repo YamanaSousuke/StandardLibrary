@@ -2,6 +2,7 @@
 
 #include <exception>
 #include <iostream>
+#include "ListIterator.h"
 
 template<class T>
 class MyAllocator
@@ -46,6 +47,27 @@ public:
 template<class T, class Alloc = MyAllocator<T>>
 class MyList
 {
+private:
+	// ノード
+	struct Node {
+		T data = 0;
+		Node* next = nullptr;
+		Node* prev = nullptr;
+	};
+
+	// ノード
+	Node* dummyNode = nullptr;
+	// サイズ
+	size_t size = 0;
+
+	Alloc allocT = {};
+
+	// ノードの割り当て
+	MyAllocator<Node> allocNode = {};
+
+public:
+	using iterator = ListIterator<T, Node>;
+
 public:
 	// コンストラクタ
 	explicit MyList(const Alloc& alloc = Alloc())
@@ -150,29 +172,58 @@ public:
 			next = next->next;
 		}
 	}
-private:
-	// ノード
-	struct Node {
-		T data = 0;
-		Node* next = nullptr;
-		Node* prev = nullptr;
-	};
 
-	// ノード
-	Node* dummyNode = nullptr;
-	// サイズ
-	size_t size = 0;
+	// -------- イテレーター --------- //
+	// リストの先頭要素を指すイテレーター
+	iterator begin()
+	{
+		return size ? iterator(dummyNode->next) : iterator(dummyNode);
+	}
+
+	// ダミーノードを指すイテレーター
+	iterator end()
+	{
+		return iterator(dummyNode);
+	}
+
+	// 要素の挿入
+	iterator insert(iterator position, const T& value)
+	{
+		Node* newNode = createNode(value);
+		newNode->prev = position.getNodePointer()->prev;
+		newNode->next = position.getNodePointer()->prev->next;
+		newNode->prev->next = newNode;
+		newNode->next->prev = newNode;
+		size++;
+		return iterator(--position);
+	}
+
+	// 範囲を指定して要素を削除する
+	iterator erase(iterator first, iterator last)
+	{
+		while (first != last) {
+			deleteNode((++first).getNodePointer()->prev);
+		}
+		return last;
+	}
+
+	// 1つの要素を削除する
+	iterator erase(iterator position)
+	{
+		// TODO : 型??
+		// Node* node = position.getNodePointer()->next;
+		// iterator it = position.getNodePointer()->next;
+		return erase(position, position.getNodePointer()->next);
+	}
+
 	
-	Alloc allocT = {};
-
-	// ノードの割り当て
-	MyAllocator<Node> allocNode = {};
 
 private:
 	// ダミーのノードの生成
 	void createDummyNode()
 	{
 		dummyNode = allocNode.allocate(1);
+
 		dummyNode->next = dummyNode;
 		dummyNode->prev = dummyNode;
 	}
