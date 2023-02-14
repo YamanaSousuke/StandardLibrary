@@ -131,6 +131,7 @@
     <ClCompile Include="String.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Allocator.h" />
     <ClInclude Include="List.h" />
     <ClInclude Include="ListIterator.h" />
     <ClInclude Include="String.h" />
