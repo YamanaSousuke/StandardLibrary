@@ -2,7 +2,7 @@
 
 // リストに利用するイテレーター
 template<typename T, typename Node>
-class ListIterator
+class listIterator
 {
 public:
 	
@@ -11,15 +11,15 @@ private:
 
 public:
 	// コンストラクタ
-	ListIterator(Node* node = nullptr) : node(node) { }
+	listIterator(Node* node = nullptr) : node(node) { }
 	// コピーコンストラクタ
-	ListIterator(const ListIterator<T, Node>& copy)
+	listIterator(const listIterator<T, Node>& copy)
 	{
 		node = copy.getNodePointer();
 	}
 
 	// デストラクタ
-	~ListIterator() { }
+	~listIterator() { }
 
 	// イテレータが指し示す実際のノードへポインタ
 	Node* getNodePointer() const
@@ -34,25 +34,25 @@ public:
 	}
 
 	// 前置演算子のオーバーロード
-	ListIterator& operator--()
+	listIterator& operator--()
 	{
 		node = node->prev;
 		return *this;
 	}
 
-	ListIterator& operator++()
+	listIterator& operator++()
 	{
 		node = node->next;
 		return *this;
 	}
 
 	// 等価演算子のオーバーロード
-	bool operator==(const ListIterator& it)
+	bool operator==(const listIterator& it)
 	{
 		return node == it.node;
 	}
 
-	bool operator!=(const ListIterator& it)
+	bool operator!=(const listIterator& it)
 	{
 		return !(*this == it);
 	}

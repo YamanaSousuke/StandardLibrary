@@ -66,7 +66,7 @@ private:
 	MyAllocator<Node> allocNode = {};
 
 public:
-	using iterator = ListIterator<T, Node>;
+	using iterator = listIterator<T, Node>;
 
 public:
 	// コンストラクタ
@@ -94,7 +94,7 @@ public:
 	// 先頭に要素の追加
 	void push_front(const T& value)
 	{
-		Node* newNode = createNode(value);
+		Node* newNode = createNewNode(value);
 		newNode->prev = dummyNode;
 		newNode->next = dummyNode->next;
 		dummyNode->next->prev = newNode;
@@ -113,7 +113,7 @@ public:
 	// 末尾に要素の追加
 	void push_back(const T& value)
 	{
-		Node* newNode = createNode(value);
+		Node* newNode = createNewNode(value);
 		newNode->prev = dummyNode->prev;
 		newNode->next = dummyNode;
 		dummyNode->prev->next = newNode;
@@ -173,7 +173,6 @@ public:
 		}
 	}
 
-	// -------- イテレーター --------- //
 	// リストの先頭要素を指すイテレーター
 	iterator begin()
 	{
@@ -184,6 +183,62 @@ public:
 	iterator end()
 	{
 		return iterator(dummyNode);
+	}
+
+	// 要素の挿入
+	iterator insert(iterator position, const T& value)
+	{
+		Node* newNode = createNewNode(value);
+		newNode->prev = position.getNodePointer()->prev;
+		newNode->next = position.getNodePointer();
+
+		newNode->prev->next = newNode;
+		newNode->next->prev = newNode;
+
+		++size;
+		return --position;
+	}
+
+	// 要素の挿入(第2引数に個数の指定)
+	void insert(iterator position, size_t num, const T& value)
+	{
+		while (num-- > 0) {
+			position = insert(position, value);
+		}
+	}
+
+	// 先頭要素
+	T& front()
+	{
+		return dummyNode->next->data;
+	}
+
+	// 末尾要素
+	T& back()
+	{
+		return dummyNode->prev->data;
+	}
+
+	// コンテナの再代入(イテレーターで範囲の指定)
+	void assign(iterator first, iterator last)
+	{
+		size_t i = 0;
+		for (iterator it = begin(); first != last; ++it, ++first, ++i) {
+			// サイズが足りなければ、拡張する
+			if (i >= size) {
+				push_back(*first);
+			}
+			// 既にあれば、解放してから値を割り当てる
+			else {
+				allocT.destroy(&(*it));
+				allocT.construct(&(*it), *first);
+			}
+		}
+
+		// numの数を超えている分は削除する
+		while (size > i) {
+			pop_back();
+		}
 	}
 
 	// コンテナの再代入(個数と値の指定)
@@ -305,7 +360,7 @@ private:
 	}
 
 	// 新しいノードの生成
-	Node* createNode(const T& value = T())
+	Node* createNewNode(const T& value = T())
 	{
 		Node* newNode = allocNode.allocate(1);
 		allocT.construct(&newNode->data, value);
