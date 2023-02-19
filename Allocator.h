@@ -1,5 +1,6 @@
 #pragma once
 
+// ƒƒ‚ƒŠ‚ÌŠm•Û‚Æ”jŠü
 template<class T>
 class MyAllocator
 {

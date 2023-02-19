@@ -31,13 +31,13 @@ public:
 	using iterator = listIterator<T, Node>;
 
 public:
-	// コンストラクタ
+	// コンストラクター
 	explicit MyList(const Alloc& alloc = Alloc())
 	{
 		createDummyNode();
 	}
 
-	// サイズと要素を指定したコンストラクタ
+	// サイズと要素を指定したコンストラクター
 	explicit MyList(size_t num, const T& value = T(), const Alloc& alloc = Alloc())
 	{
 		createDummyNode();
@@ -46,11 +46,18 @@ public:
 		}
 	}
 
-	// デストラクタ
+	// デストラクター
 	~MyList()
 	{
 		clear();
 		allocNode.deallocate(dummyNode);
+	}
+
+	// 代入演算子のオーバーロード
+	MyList& operator=(const MyList& other)
+	{
+		MyList copy(other);
+		return copy;
 	}
 
 	// 先頭に要素の追加
