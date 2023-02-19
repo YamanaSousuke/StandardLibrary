@@ -18,20 +18,20 @@ int main()
 		std::cout << value << std::endl;
 	}
 
-	// MyList<int> myList;
-	// MyList<int> myList2;
-	// myList.push_back(5);
-	// myList.push_back(7);
-	// myList.push_back(8);
-	// myList.push_back(9);
-	// myList.insert(myList.end(), 10);
+	MyList<int> myList;
+	MyList<int> myList2;
+	myList.push_back(5);
+	myList.push_back(7);
+	myList.push_back(8);
+	myList.push_back(9);
 
-	//myList2.push_back(1);
-	//myList2.push_back(2);
-	//myList2.push_back(3);
-	//myList2.push_back(4);
+	myList2.push_back(1);
+	myList2.push_back(2);
+	myList2.push_back(3);
+	myList2.push_back(4);
 
-	// myList.ToString();
+	myList = myList2;
+	myList.ToString();
 	
 	// for (auto value : myList) {
 	// 

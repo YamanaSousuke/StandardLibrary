@@ -134,6 +134,7 @@
     <ClInclude Include="Allocator.h" />
     <ClInclude Include="List.h" />
     <ClInclude Include="ListIterator.h" />
+    <ClInclude Include="SharedPointer.h" />
     <ClInclude Include="String.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
