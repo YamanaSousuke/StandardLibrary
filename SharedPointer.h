@@ -67,6 +67,12 @@ public:
 		return *this;
 	}
 
+	// ネイティブポインターの取得
+	T* get() const
+	{
+		return data != nullptr ? data->ptr : nullptr;
+	}
+
 	// 間接演算子のオーバーロード
 	T& operator*() const
 	{
@@ -79,6 +85,46 @@ public:
 		delete(toRemove->ptr);
 		delete(toRemove->refCount);
 		delete(toRemove);
+	}
+
+	// 所有権の放棄
+	void reset()
+	{
+		if (data != nullptr) {
+			// 1つだけ所有している
+			if (*(data->refCount == 1)) {
+				remove(data);
+				data = nullptr;
+			}
+			// 他のと共有している
+			else {
+				*(data->refCount) -= 1;
+				delete(data);
+				data = nullptr;
+			}
+		}
+	}
+
+	// 新しい所有権を設定して、現在の所有権を破棄する
+	void reset(T* resouce)
+	{
+		if (data != nullptr) {
+			// 1つだけ所有している
+			if (*(data->refCount == 1)) {
+				remove(data);
+				data = nullptr;
+			}
+			// 他のと共有している
+			else {
+				*(data->refCount) -= 1;
+				delete(data);
+				data = nullptr;
+			}
+		}
+
+		data = new smart_pointer<T>();
+		data->ptr = resouce;
+		data->refCount = new int(1);
 	}
 
 	// デストラクター
