@@ -24,9 +24,9 @@ int main()
 
 		ptr = ptr2;
 		// 
-		// *ptr += 10;
-		// *ptr2 += 10;
+		*ptr += 10;
+		*ptr2 += 10;
 	}
-	// std::cout << *ptr << std::endl;
+	std::cout << *ptr << std::endl;
 	return 0;
 }

@@ -12,8 +12,6 @@ public:
 	int* refCount;
 };
 
-
-
 template<typename T>
 class shared_pointer
 {
@@ -25,7 +23,62 @@ public:
 	{
 		data = new smart_pointer<T>();
 		data->ptr = ptrObj;
-		data->refCount = new int();
+		data->refCount = new int(1);
+	}
+
+	// 代入演算子のオーバーロード
+	shared_pointer& operator=(const shared_pointer<T>& other)
+	{
+		// コピーする側のメモリが確保されている場合
+		if (other.data != nullptr) {
+			// コピーされる側のメモリが未確保
+			if (data == nullptr) {
+				data = new smart_pointer<T>();
+				data->ptr = other.data->ptr;
+				data->refCount = other.data->refCount;
+				*(other.data->refCount) += 1;
+				return *this;
+			}
+			else {
+				*(data->refCount) -= 1;
+				if (data->refCount == 0) {
+					delete(data->ptr);
+				}
+
+				data->ptr = other.data->ptr;
+				*(other.data->refCount) += 1;
+				data->refCount = other.data->refCount;
+			}
+		}
+		else {
+			
+			if (data != nullptr) {
+				if (*(data->refCount) == 1) {
+					remove(data);
+				}
+				else {
+					*(data->refCount) -= 1;
+				}
+			}
+
+			data = nullptr;
+		}
+
+		return *this;
+	}
+
+	// 間接演算子のオーバーロード
+	T& operator*() const
+	{
+		return *(data->ptr);
+	}
+
+	// 指定したポインターの破棄
+	void remove(smart_pointer<T>* toRemove)
+	{
+		delete(toRemove->ptr);
+		delete(toRemove->refCount);
+		delete(toRemove);
 	}
 
 	// デストラクター
