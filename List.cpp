@@ -1,41 +1,32 @@
 #include <iostream>
 #include "List.h"
+#include "SharedPointer.h"
 #include <list>
+#include <memory>
 
 int main()
 {
-	std::list<int> test = {};
-	std::list<int> test2 = {};
-	test.push_back(5);
-	test.push_back(6);
-	test.push_back(7);
-	test.push_back(8);
-	test.insert(test.begin(), 3, 5);
+	/*std::shared_ptr<int> ptr;
+	{
+		std::shared_ptr<int> ptr2(new int());
 
+		ptr = ptr2;
 
-	// 
-	for (auto value : test) {
-		std::cout << value << std::endl;
+		*ptr += 10;
+		*ptr2 += 10;
 	}
+	std::cout << *ptr << std::endl;*/
 
-	MyList<int> myList;
-	MyList<int> myList2;
-	myList.push_back(5);
-	myList.push_back(7);
-	myList.push_back(8);
-	myList.push_back(9);
 
-	myList2.push_back(1);
-	myList2.push_back(2);
-	myList2.push_back(3);
-	myList2.push_back(4);
+	shared_pointer<int> ptr;
+	{
+		shared_pointer<int> ptr2(new int());
 
-	myList = myList2;
-	myList.ToString();
-	
-	// for (auto value : myList) {
-	// 
-	// }
-	// myList.begin();
+		ptr = ptr2;
+		// 
+		// *ptr += 10;
+		// *ptr2 += 10;
+	}
+	// std::cout << *ptr << std::endl;
 	return 0;
 }

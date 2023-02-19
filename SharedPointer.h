@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <iostream>
 
 template<typename T>
 class smart_pointer
@@ -19,6 +20,13 @@ class shared_pointer
 public:
 	// コンストラクター
 	shared_pointer() = default;
+	// 引数有りコンストラクター
+	explicit shared_pointer(T* ptrObj)
+	{
+		data = new smart_pointer<T>();
+		data->ptr = ptrObj;
+		data->refCount = new int();
+	}
 
 	// デストラクター
 	~shared_pointer() {
