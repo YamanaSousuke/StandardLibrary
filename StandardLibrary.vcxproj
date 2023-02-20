@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="List.cpp" />
     <ClCompile Include="String.cpp" />
+    <ClCompile Include="UniquePtr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Allocator.h" />

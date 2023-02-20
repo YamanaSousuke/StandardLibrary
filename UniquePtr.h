@@ -6,83 +6,33 @@ class MyUniquePtr
 {
 public:
 	// デフォルトコンストラクター
-	MyUniquePtr() : data(nullptr) { }
+	MyUniquePtr();
 	// コンストラクター
-	MyUniquePtr(T* data) : data(data) { }
+	MyUniquePtr(T* data);
 	// コピー禁止
 	MyUniquePtr(const MyUniquePtr&) = delete;
 	MyUniquePtr& operator=(const MyUniquePtr&) = delete;
 	// ムーブコンストラクター
-	MyUniquePtr(MyUniquePtr&& other) noexcept
-	{
-		data = other.data;
-		other.data = nullptr;
-	}
+	MyUniquePtr(MyUniquePtr&& other) noexcept;
 	// ムーブ代入演算子
-	MyUniquePtr& operator=(MyUniquePtr&& other) noexcept
-	{
-		if (this == &other) {
-			return *this;
-		}
-
-		data = other.data;
-		other.data = nullptr;
-		return *this;
-	}
-
+	MyUniquePtr& operator=(MyUniquePtr&& other) noexcept;
 	// デストラクター
-	~MyUniquePtr()
-	{
-		if (data != nullptr) {
-			delete data;
-		}
-	}
+	~MyUniquePtr();
 
 	// 間接演算子のオーバーロード
-	T& operator*() const
-	{
-		return *data;
-	}
-
+	T& operator*() const;
 	// アロー演算子のオーバーロード
-	T* operator->() const
-	{
-		return data;
-	}
-
+	T* operator->() const;
 	// ポインタを管理しているかを確認する
-	operator bool() const
-	{
-		return data ? true : false;
-	}
-
-	// ネイティブポインターの取得
-	T* get() const
-	{
-		return data;
-	}
-
+	operator bool() const;
+	// ポインターの取得
+	T* get() const;
 	// リソースの解放
-	void reset()
-	{
-		delete data;
-		data = nullptr;
-	}
-
+	void reset();
 	// リソースの開放と新しいリソースの設定
-	void reset(T* newData)
-	{
-		delete data;
-		data = newData;
-	}
-
+	void reset(T* newData);
 	// リソースを管理下から離す
-	T* release()
-	{
-		T* temp(data);
-		data = nullptr;
-		return temp;
-	}
+	T* release();
 private:
 	// リソース
 	T* data;
