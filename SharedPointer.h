@@ -1,149 +1,121 @@
 #pragma once
 
-#include <memory>
-#include <iostream>
-
 template<typename T>
-class smart_pointer
-{
-public:
-	T* ptr;
-	// 参照カウント
-	int* refCount;
-};
-
-template<typename T>
-class shared_pointer
+class MySharedPointer
 {
 public:
 	// コンストラクター
-	shared_pointer() = default;
-	// 引数有りコンストラクター
-	explicit shared_pointer(T* ptrObj)
+	MySharedPointer()
 	{
-		data = new smart_pointer<T>();
-		data->ptr = ptrObj;
-		data->refCount = new int(1);
+		count = new int(-1);
+	}
+
+	// 引数有りコンストラクター
+	explicit MySharedPointer(T* data)
+	{
+		count = new int(1);
+		this->data = data;
+	}
+
+	// デストラクター
+	~MySharedPointer()
+	{
+		// 最後の一つなので破棄する
+		if (use_count() == 1) {
+			delete count;
+			delete data;
+		}
+		// 参照カウントだけ破棄する
+		else if (use_count() == -1) {
+			delete count;
+		}
+		// まだ残っているので、参照カウントを減らす
+		else {
+			set_count(use_count() - 1);
+		}
 	}
 
 	// 代入演算子のオーバーロード
-	shared_pointer& operator=(const shared_pointer<T>& other)
+	MySharedPointer& operator=(const MySharedPointer& other)
 	{
-		// コピーする側のメモリが確保されている場合
+		// コピーする側の所有権がある
 		if (other.data != nullptr) {
-			// コピーされる側のメモリが未確保
+
+			// コピーされる側の所有権がない
 			if (data == nullptr) {
-				data = new smart_pointer<T>();
-				data->ptr = other.data->ptr;
-				data->refCount = other.data->refCount;
-				*(other.data->refCount) += 1;
+				data = new T();
+				data = other.data;
+				count = other.count;
+				*count += 1;
 				return *this;
 			}
+			// コピーされる側の所有権がある
 			else {
-				*(data->refCount) -= 1;
-				if (data->refCount == 0) {
-					delete(data->ptr);
+				*count -= 1;
+				// コピーされる側の所有権が最後の場合は参照カウントの破棄
+				if (*count == 0) {
+					delete count;
 				}
 
-				data->ptr = other.data->ptr;
-				*(other.data->refCount) += 1;
-				data->refCount = other.data->refCount;
+				// リソースへのポインターを張り替える
+				data = other.data;
+				count = other.count;
+				*count += 1;
 			}
-		}
-		else {
-			
-			if (data != nullptr) {
-				if (*(data->refCount) == 1) {
-					remove(data);
-				}
-				else {
-					*(data->refCount) -= 1;
-				}
-			}
-
-			data = nullptr;
 		}
 
 		return *this;
 	}
 
-	// ネイティブポインターの取得
-	T* get() const
-	{
-		return data != nullptr ? data->ptr : nullptr;
-	}
-
 	// 間接演算子のオーバーロード
 	T& operator*() const
 	{
-		return *(data->ptr);
+		return *data;
 	}
 
-	// 指定したポインターの破棄
-	void remove(smart_pointer<T>* toRemove)
+	// アドレス演算子のオーバーロード
+	T* operator->() const
 	{
-		delete(toRemove->ptr);
-		delete(toRemove->refCount);
-		delete(toRemove);
+		return data;
 	}
 
-	// 所有権の放棄
+	// ネイティブポインターの取得
+	T* get() const
+	{
+		return data;
+	}
+
+	// 参照カウントの取得
+	int use_count()
+	{
+		return *count;
+	}
+
+	// 所有権の破棄
 	void reset()
 	{
 		if (data != nullptr) {
-			// 1つだけ所有している
-			if (*(data->refCount == 1)) {
-				remove(data);
-				data = nullptr;
+			// 最後の一つなので破棄する
+			if (*count == 1) {
+				delete count;
+				delete data;
 			}
-			// 他のと共有している
+			// まだ残っているので、参照カウントを減らす
 			else {
-				*(data->refCount) -= 1;
-				delete(data);
-				data = nullptr;
+				*count -= 1;
+				delete data;
 			}
 		}
 	}
 
-	// 新しい所有権を設定して、現在の所有権を破棄する
-	void reset(T* resouce)
+	// 参照カウントの設定
+	void set_count(int count)
 	{
-		if (data != nullptr) {
-			// 1つだけ所有している
-			if (*(data->refCount == 1)) {
-				remove(data);
-				data = nullptr;
-			}
-			// 他のと共有している
-			else {
-				*(data->refCount) -= 1;
-				delete(data);
-				data = nullptr;
-			}
-		}
-
-		data = new smart_pointer<T>();
-		data->ptr = resouce;
-		data->refCount = new int(1);
-	}
-
-	// デストラクター
-	~shared_pointer() {
-		if (data != nullptr) {
-			if (data->refCount != nullptr) {
-				if (*(data->refCount) == 1) {
-					delete(data->refCount);
-					if (data->ptr != nullptr) {
-						delete(data->ptr);
-					}
-				}
-				else {
-					*data->refCount -= 1;
-				}
-			}
-			delete(data);
-		}
+		*(this->count) = count;
 	}
 private:
-	smart_pointer<T>* data = nullptr;
+	// リソース
+	T* data = nullptr;
+	// 参照カウント
+	int* count = nullptr;
 };
