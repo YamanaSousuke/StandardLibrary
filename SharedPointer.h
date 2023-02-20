@@ -1,37 +1,47 @@
 #pragma once
 
+#include <iostream>
+
 template<typename T>
 class MySharedPointer
 {
 public:
 	// コンストラクター
-	MySharedPointer()
-	{
-		count = new int(-1);
-	}
+	MySharedPointer() { }
 
 	// 引数有りコンストラクター
 	explicit MySharedPointer(T* data)
 	{
-		count = new int(1);
 		this->data = data;
+		count = new int(1);
+	}
+
+	// コピーコンストラクター
+	MySharedPointer(const MySharedPointer& other)
+	{
+		if (other.data != nullptr) {
+			data = new T();
+			data = other.data;
+			count = other.count;
+			*count += 1;
+		}
 	}
 
 	// デストラクター
 	~MySharedPointer()
 	{
-		// 最後の一つなので破棄する
-		if (use_count() == 1) {
-			delete count;
-			delete data;
-		}
-		// 参照カウントだけ破棄する
-		else if (use_count() == -1) {
-			delete count;
-		}
-		// まだ残っているので、参照カウントを減らす
-		else {
-			set_count(use_count() - 1);
+		if (count != nullptr) {
+			// 最後の所有権
+			if (*count == 1) {
+				delete count;
+				if (data != nullptr) {
+					delete data;
+				}
+			}
+			// 参照カウントを下げる
+			else {
+				*count -= 1;
+			}
 		}
 	}
 
@@ -40,7 +50,6 @@ public:
 	{
 		// コピーする側の所有権がある
 		if (other.data != nullptr) {
-
 			// コピーされる側の所有権がない
 			if (data == nullptr) {
 				data = new T();
@@ -86,7 +95,7 @@ public:
 	}
 
 	// 参照カウントの取得
-	int use_count()
+	int use_count() const
 	{
 		return *count;
 	}
@@ -94,24 +103,40 @@ public:
 	// 所有権の破棄
 	void reset()
 	{
-		if (data != nullptr) {
+		if (count != nullptr) {
 			// 最後の一つなので破棄する
 			if (*count == 1) {
 				delete count;
+				count = nullptr;
 				delete data;
+				data = nullptr;
 			}
 			// まだ残っているので、参照カウントを減らす
 			else {
 				*count -= 1;
-				delete data;
 			}
 		}
 	}
 
-	// 参照カウントの設定
-	void set_count(int count)
+	// 所有権を放棄し、新たなリソースの所有権を設定する
+	void reset(T* newData)
 	{
-		*(this->count) = count;
+		if (count != nullptr) {
+			// 最後の一つなので破棄する
+			if (*count == 1) {
+				delete count;
+				count = nullptr;
+				delete data;
+				data = nullptr;
+			}
+			// まだ残っているので、参照カウントを減らす
+			else {
+				*count -= 1;
+			}
+		}
+
+		data = newData;
+		count = new int(1);
 	}
 private:
 	// リソース

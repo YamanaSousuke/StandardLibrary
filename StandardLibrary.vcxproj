@@ -136,6 +136,7 @@
     <ClInclude Include="ListIterator.h" />
     <ClInclude Include="SharedPointer.h" />
     <ClInclude Include="String.h" />
+    <ClInclude Include="UniquePtr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
