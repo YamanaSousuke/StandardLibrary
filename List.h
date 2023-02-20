@@ -54,11 +54,11 @@ public:
 	}
 
 	// 代入演算子のオーバーロード
-	MyList& operator=(const MyList& other)
-	{
-		MyList copy(other);
-		return copy;
-	}
+	// MyList& operator=(const MyList& other)
+	// {
+	// 	MyList copy(other);
+	// 	return copy;
+	// }
 
 	// 先頭に要素の追加
 	void push_front(const T& value)
