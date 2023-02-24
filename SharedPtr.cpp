@@ -2,21 +2,21 @@
 
 // デフォルトコンストラクター
 template<typename T>
-MySharedPointer<T>::MySharedPointer() : data(nullptr)
+MySharedPtr<T>::MySharedPtr() : data(nullptr)
 {
 
 }
 
 // コンストラクター
 template<typename T>
-MySharedPointer<T>::MySharedPointer(T* data) : data(data)
+MySharedPtr<T>::MySharedPtr(T* data) : data(data)
 {
 	count = new int(1);
 }
 
 // コピーコンストラクター
 template<typename T>
-MySharedPointer<T>::MySharedPointer(const MySharedPointer& other)
+MySharedPtr<T>::MySharedPtr(const MySharedPtr& other)
 {
 	if (other.data != nullptr) {
 		data = new T();
@@ -28,7 +28,7 @@ MySharedPointer<T>::MySharedPointer(const MySharedPointer& other)
 
 // デストラクター
 template<typename T>
-MySharedPointer<T>::~MySharedPointer()
+MySharedPtr<T>::~MySharedPtr()
 {
 	if (count != nullptr) {
 		// 最後の所有権
@@ -47,7 +47,7 @@ MySharedPointer<T>::~MySharedPointer()
 
 // 代入演算子のオーバーロード
 template<typename T>
-MySharedPointer<T>& MySharedPointer<T>::operator=(const MySharedPointer& other)
+MySharedPtr<T>& MySharedPtr<T>::operator=(const MySharedPtr& other)
 {
 	// コピーする側の所有権がある
 	if (other.data != nullptr) {
@@ -79,35 +79,35 @@ MySharedPointer<T>& MySharedPointer<T>::operator=(const MySharedPointer& other)
 
 // 間接演算子のオーバーロード
 template<typename T>
-T& MySharedPointer<T>::operator*() const
+T& MySharedPtr<T>::operator*() const
 {
 	return *data;
 }
 
 // アロー演算子のオーバーロード
 template<typename T>
-T* MySharedPointer<T>::operator->() const
+T* MySharedPtr<T>::operator->() const
 {
 	return data;
 }
 
 // ポインターの取得
 template<typename T>
-T* MySharedPointer<T>::get() const
+T* MySharedPtr<T>::get() const
 {
 	return data;
 }
 
 // 参照カウントの取得
 template<typename T>
-int MySharedPointer<T>::use_count() const
+int MySharedPtr<T>::use_count() const
 {
 	return 0;
 }
 
 // 所有権の破棄
 template<typename T>
-void MySharedPointer<T>::reset()
+void MySharedPtr<T>::reset()
 {
 	if (count != nullptr) {
 		// 最後の一つなので破棄する
@@ -126,7 +126,7 @@ void MySharedPointer<T>::reset()
 
 // 所有権を放棄し、新たなリソースの所有権を設定する
 template<typename T>
-void MySharedPointer<T>::reset(T* newData)
+void MySharedPtr<T>::reset(T* newData)
 {
 	if (count != nullptr) {
 		// 最後の一つなので破棄する

@@ -3,20 +3,20 @@
 #include <iostream>
 
 template<typename T>
-class MySharedPointer
+class MySharedPtr
 {
 public:
 	// デフォルトコンストラクター
-	MySharedPointer();
+	MySharedPtr();
 	// コンストラクター
-	explicit MySharedPointer(T* data);
+	explicit MySharedPtr(T* data);
 	// コピーコンストラクター
-	MySharedPointer(const MySharedPointer& other);
+	MySharedPtr(const MySharedPtr& other);
 	// デストラクター
-	~MySharedPointer();
+	~MySharedPtr();
 
 	// 代入演算子のオーバーロード
-	MySharedPointer& operator=(const MySharedPointer& other);
+	MySharedPtr& operator=(const MySharedPtr& other);
 	// 間接演算子のオーバーロード
 	T& operator*() const;
 	// アロー演算子のオーバーロード
