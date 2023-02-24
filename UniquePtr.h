@@ -8,7 +8,7 @@ public:
 	// デフォルトコンストラクター
 	MyUniquePtr();
 	// コンストラクター
-	MyUniquePtr(T* data);
+	explicit MyUniquePtr(T* data);
 	// コピー禁止
 	MyUniquePtr(const MyUniquePtr&) = delete;
 	MyUniquePtr& operator=(const MyUniquePtr&) = delete;
