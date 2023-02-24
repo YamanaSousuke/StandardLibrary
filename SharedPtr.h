@@ -1,7 +1,6 @@
 #pragma once
 
-#include <iostream>
-
+// 指定されたリソースへの所有権を共有するスマートポインタ
 template<typename T>
 class MySharedPtr
 {

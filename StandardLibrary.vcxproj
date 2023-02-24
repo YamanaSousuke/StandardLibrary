@@ -131,6 +131,7 @@
     <ClCompile Include="SharedPtr.cpp" />
     <ClCompile Include="String.cpp" />
     <ClCompile Include="UniquePtr.cpp" />
+    <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Allocator.h" />
@@ -139,6 +140,7 @@
     <ClInclude Include="SharedPtr.h" />
     <ClInclude Include="String.h" />
     <ClInclude Include="UniquePtr.h" />
+    <ClInclude Include="Vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

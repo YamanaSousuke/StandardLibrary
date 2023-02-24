@@ -1,14 +1,18 @@
 #pragma once
 
+#include <exception>
+#include <iostream>
+
 // メモリの確保と破棄
 template<class T>
 class MyAllocator
 {
 public:
+	// デフォルトコンストラクター
 	MyAllocator() { }
 
 	// ストレージの確保
-	T* allocate(size_t num)
+	T* allocate(size_t num) const
 	{
 		T* ret = nullptr;
 		const size_t size = num * sizeof(T);
@@ -22,7 +26,7 @@ public:
 		return ret;
 	}
 
-	void construct(T* p, const T& value)
+	void construct(T* p, const T& value) const
 	{
 		*p = value;
 	}

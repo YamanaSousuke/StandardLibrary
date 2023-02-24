@@ -1,4 +1,4 @@
-#include "SharedPointer.h"
+#include "SharedPtr.h"
 
 // デフォルトコンストラクター
 template<typename T>
