@@ -13,7 +13,9 @@ private:
 	size_t size = 0;
 	size_t capacity = 0;
 
+public:
 	using iterator = VectorIterator<T>;
+
 public:
 	// デフォルトコンストラクター
 	explicit MyVector(const Alloc& alloc = Alloc())
@@ -32,6 +34,18 @@ public:
 		}
 	}
 
+	// 先頭要素を指すイテレーターの取得
+	iterator begin()
+	{
+		return iterator(ptr);
+	}
+
+	// 末尾要素を指すイテレーターの取得
+	iterator end()
+	{
+		return iterator(ptr + size);
+	}
+
 	// 要素の表示
 	void ToString()
 	{
@@ -43,7 +57,11 @@ public:
 	// デストラクター
 	~MyVector()
 	{
+		for (iterator it = begin(); it != end(); ++it) {
+			alloc.destroy(&(*it));
+		}
 
+		alloc.deallocate(ptr);
 	}
 
 private:

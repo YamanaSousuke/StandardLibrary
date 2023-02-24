@@ -34,7 +34,8 @@ public:
 	// 領域の解放
 	void deallocate(T* p)
 	{
-		delete p;
+		// delete p;
+		delete[] p;
 	}
 
 	// 割り当てられたストレージ内のオブジェクトの破棄
