@@ -8,7 +8,10 @@ int main()
 {
 	MyString myString = "Test";
 
-	MyUniquePtr<int> myUniquePointer;
+	MyUniquePtr<int> myUniquePtr;
+
+	MySharedPtr<int> mySharedPtr;
+
 
 	return 0;
 }
