@@ -5,11 +5,6 @@ template<typename T, typename Node>
 class listIterator
 {
 public:
-	
-private:
-	Node* node = nullptr;
-
-public:
 	// コンストラクタ
 	listIterator(Node* node = nullptr) : node(node) { }
 	// コピーコンストラクタ
@@ -52,8 +47,13 @@ public:
 		return node == it.node;
 	}
 
+	// 非等価演算子のオーバーロード
 	bool operator!=(const listIterator& it)
 	{
 		return !(*this == it);
 	}
+
+private:
+	// ノード
+	Node* node = nullptr;
 };

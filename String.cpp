@@ -7,6 +7,7 @@ MyString::MyString()
 	data[0] = '\0';
 }
 
+// 文字列を指定したコンストラクター
 MyString::MyString(const char* value)
 {
 	while (value[length] != '\0') {

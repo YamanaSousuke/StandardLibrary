@@ -1,11 +1,9 @@
 #pragma once
 
-#include <exception>
-#include <iostream>
 #include "ListIterator.h"
 #include "Allocator.h"
 
-// リスト
+// 双方向循環リスト
 template<class T, class Alloc = MyAllocator<T>>
 class MyList
 {
@@ -52,13 +50,6 @@ public:
 		clear();
 		allocNode.deallocate(dummyNode);
 	}
-
-	// 代入演算子のオーバーロード
-	// MyList& operator=(const MyList& other)
-	// {
-	// 	MyList copy(other);
-	// 	return copy;
-	// }
 
 	// 先頭に要素の追加
 	void push_front(const T& value)
@@ -284,43 +275,6 @@ public:
 			}
 			else {
 				++it;
-			}
-		}
-	}
-
-	// 1つの要素を移動させる
-	void splice(iterator position, MyList& list, iterator before)
-	{
-		// 要素を減らす
-		Node* temp = before.getNodePointer();
-		temp->next->prev = temp->prev;
-		temp->prev->next = temp->next;
-
-		// 新しい要素に付け加える
-		temp->prev = position.getNodePointer()->prev;
-		temp->next = position.getNodePointer();
-		position.getNodePointer()->prev->next = temp;
-		position.getNodePointer()->prev = temp;
-
-		--list.size;
-		++size;
-	}
-
-	void merge(MyList& x)
-	{
-		// 同じリストなら比較しない
-		if (&x == this) {
-			return;
-		}
-
-		iterator thisIt = end();
-
-		for (iterator xIt = x.end(); xIt.getNodePointer()->next != x.end().getNodePointer();) {
-			if (thisIt.getNodePointer()->next == end().getNodePointer() || xIt.getNodePointer()->next->data < thisIt.getNodePointer()->next->data) {
-				splice(thisIt.getNodePointer()->next, x, xIt.getNodePointer()->next);
-			}
-			else {
-				++thisIt;
 			}
 		}
 	}

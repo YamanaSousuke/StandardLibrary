@@ -4,13 +4,15 @@
 class MyString
 {
 public:
-	// コンストラクター
+	// デフォルトコンストラクター
 	MyString();
+	// 文字列を指定したコンストラクター
 	MyString(const char* value);
 	// デストラクター
 	~MyString();
 	// コピーコンストラクター
 	MyString(const MyString& other);
+
 	// 代入演算子のオーバーロード
 	void operator=(const MyString& other);
 	// 添え字演算子のオーバーロード
