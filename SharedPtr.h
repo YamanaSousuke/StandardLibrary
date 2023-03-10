@@ -5,11 +5,8 @@ template<typename T>
 class MySharedPtr
 {
 public:
-	// デフォルトコンストラクター
-	MySharedPtr() : data(nullptr) { }
-
 	// コンストラクター
-	explicit MySharedPtr(T* data) : data(data)
+	explicit MySharedPtr(T* data = nullptr) : data(data)
 	{
 		count = new int(1);
 	}
@@ -17,7 +14,8 @@ public:
 	// コピーコンストラクター
 	MySharedPtr(const MySharedPtr& other)
 	{
-		if (other.data != nullptr) {
+		// コピーする側に所有権があれば
+		if (other.count != nullptr) {
 			data = new T();
 			data = other.data;
 			count = other.count;
@@ -25,31 +23,13 @@ public:
 		}
 	}
 
-	// デストラクター
-	~MySharedPtr()
-	{
-		if (count != nullptr) {
-			// 最後の所有権
-			if (*count == 1) {
-				delete count;
-				if (data != nullptr) {
-					delete data;
-				}
-			}
-			// 参照カウントを下げる
-			else {
-				*count -= 1;
-			}
-		}
-	}
-
 	// 代入演算子のオーバーロード
 	MySharedPtr& operator=(const MySharedPtr& other)
 	{
 		// コピーする側の所有権がある
-		if (other.data != nullptr) {
+		if (other.count != nullptr) {
 			// コピーされる側の所有権がない
-			if (data == nullptr) {
+			if (count == nullptr) {
 				data = new T();
 				data = other.data;
 				count = other.count;
@@ -72,6 +52,24 @@ public:
 		}
 
 		return *this;
+	}
+
+	// デストラクター
+	~MySharedPtr()
+	{
+		if (count != nullptr) {
+			// 最後の所有権
+			if (*count == 1) {
+				delete count;
+				if (data != nullptr) {
+					delete data;
+				}
+			}
+			// 参照カウントを下げる
+			else {
+				*count -= 1;
+			}
+		}
 	}
 
 	// 間接演算子のオーバーロード

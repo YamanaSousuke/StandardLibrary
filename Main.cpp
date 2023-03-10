@@ -6,12 +6,15 @@
 
 int main()
 {
-	MyString myString = "Test";
+	MyString myString;
 
 	MyUniquePtr<int> myUniquePtr;
 
 	MySharedPtr<int> mySharedPtr;
 
+	MyList<int> myList;
+
+	MyVector<int> myVector;
 
 	return 0;
 }
